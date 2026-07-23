@@ -1,12 +1,22 @@
 package com.demo.app.controller;
-// VULN: CWE-209 (LOW) - Exception message and full stack trace exposed to the client
-import org.springframework.web.bind.annotation.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.http.ResponseEntity;
-import java.util.Arrays;
+
 @ControllerAdvice
 public class DebugController {
+
+    private static final Logger logger = LoggerFactory.getLogger(DebugController.class);
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception e) {
-        return ResponseEntity.status(500).body("Error: " + e.getMessage() + "\nTrace: " + Arrays.toString(e.getStackTrace()));
+        // Log the exception details for debugging purposes
+        logger.error("An unexpected error occurred", e);
+
+        // Return a generic error message to the client
+        return ResponseEntity.status(500).body("An unexpected error occurred. Please contact support if the issue persists.");
     }
 }
