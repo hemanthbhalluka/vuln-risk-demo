@@ -13,6 +13,6 @@ public class CookieController {
         cookie.setHttpOnly(true); // Ensures the cookie is not accessible via JavaScript
         cookie.setSecure(true);   // Ensures the cookie is sent only over HTTPS
         response.addCookie(cookie);
-        return "Logged in";
+        return "Logged in success";
     }
 }
