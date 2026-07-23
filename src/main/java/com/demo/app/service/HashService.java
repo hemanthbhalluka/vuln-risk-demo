@@ -1,16 +1,22 @@
 package com.demo.app.service;
-// VULN: CWE-327 (MEDIUM) - Weak hash (unsalted MD5) used for password storage
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.security.MessageDigest;
-import java.util.Base64;
+
 @Service
 public class HashService {
+
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    public HashService() {
+        this.passwordEncoder = new BCryptPasswordEncoder();
+    }
+
     public String hashPassword(String password) {
         try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] hash = md.digest(password.getBytes());
-            return Base64.getEncoder().encodeToString(hash);
+            return passwordEncoder.encode(password);
         } catch (Exception e) {
+            // Log the exception and return null or handle it as per application requirements
             return null;
         }
     }
