@@ -1,15 +1,26 @@
 package com.demo.app.controller;
-// VULN: CWE-89 (HIGH) - SQL Injection via string-concatenated query
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import java.util.List;
 import java.util.Map;
-@RestController @RequestMapping("/api/users")
+
+@RestController
+@RequestMapping("/api/users")
 public class SQLiUserController {
-    private final JdbcTemplate db;
-    public SQLiUserController(JdbcTemplate db) { this.db = db; }
+    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    public SQLiUserController(JdbcTemplate jdbcTemplate) {
+        this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(jdbcTemplate);
+    }
+
     @GetMapping("/find")
     public List<Map<String, Object>> findUser(@RequestParam String email) {
-        return db.queryForList("SELECT * FROM users WHERE email = '" + email + "'");
+        String query = "SELECT * FROM users WHERE email = :email";
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("email", email);
+        return namedParameterJdbcTemplate.queryForList(query, parameters);
     }
 }
