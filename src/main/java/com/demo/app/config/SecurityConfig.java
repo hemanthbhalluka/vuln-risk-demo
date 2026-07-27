@@ -17,7 +17,7 @@ public class SecurityConfig {
             .formLogin(login -> login
                 .loginPage("/login")
                 .permitAll())
-            .logout(logout -> logout
+            .logout(logout -> logou
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login?logout")
                 .permitAll());
