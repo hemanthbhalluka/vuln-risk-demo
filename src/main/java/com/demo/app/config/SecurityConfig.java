@@ -14,10 +14,10 @@ public class SecurityConfig {
                 .requestMatchers("/public/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated())
-            .formLogin(login -> login
+            .formLogin(login -> login 
                 .loginPage("/login")
                 .permitAll())
-            .logout(logout -> logou
+            .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login?logout")
                 .permitAll());
