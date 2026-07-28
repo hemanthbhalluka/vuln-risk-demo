@@ -1,12 +1,18 @@
 package com.demo.app.controller;
-// VULN: CWE-209 (LOW) - Exception message and full stack trace exposed to the client
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
-import java.util.Arrays;
+import org.springframework.http.HttpStatus;
+
 @ControllerAdvice
 public class DebugController {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception e) {
-        return ResponseEntity.status(500).body("Error: " + e.getMessage() + "\nTrace: " + Arrays.toString(e.getStackTrace()));
+        // Log the exception details for internal debugging
+        System.err.println("Exception occurred: " + e.getMessage());
+        e.printStackTrace();
+
+        // Return a generic error message to the client
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred. Please contact support.");
     }
 }

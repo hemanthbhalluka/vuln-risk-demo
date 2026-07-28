@@ -1,18 +1,26 @@
 package com.demo.app.service;
-// VULN: CWE-78 (HIGH) - OS Command Injection via unsanitized 'ip' parameter
+
 import org.springframework.stereotype.Service;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 @Service
 public class CommandService {
     public String checkServerHealth(String ip) {
         StringBuilder output = new StringBuilder();
         try {
-            Process p = Runtime.getRuntime().exec("ping -c 3 " + ip);
-            BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            String line;
-            while ((line = r.readLine()) != null) { output.append(line); }
-        } catch (Exception e) {}
+            // Validate the IP address format
+            InetAddress address = InetAddress.getByName(ip);
+            if (address.isReachable(3000)) {
+                output.append("Server is reachable.");
+            } else {
+                output.append("Server is not reachable.");
+            }
+        } catch (UnknownHostException e) {
+            output.append("Invalid IP address.");
+        } catch (Exception e) {
+            output.append("An error occurred while checking server health.");
+        }
         return output.toString();
     }
 }
