@@ -1,14 +1,26 @@
 package com.demo.app.service;
-// VULN: CWE-327 (MEDIUM) - Weak hash (unsalted MD5) used for password storage
+
 import org.springframework.stereotype.Service;
-import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.util.Base64;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+
 @Service
 public class HashService {
+    private static final int ITERATIONS = 10000;
+    private static final int KEY_LENGTH = 256;
+
     public String hashPassword(String password) {
         try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] hash = md.digest(password.getBytes());
+            SecureRandom random = new SecureRandom();
+            byte[] salt = new byte[16];
+            random.nextBytes(salt);
+
+            PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), salt, ITERATIONS, KEY_LENGTH);
+            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+            byte[] hash = factory.generateSecret(spec).getEncoded();
+
             return Base64.getEncoder().encodeToString(hash);
         } catch (Exception e) {
             return null;

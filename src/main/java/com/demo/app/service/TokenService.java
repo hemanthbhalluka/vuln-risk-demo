@@ -1,12 +1,13 @@
 package com.demo.app.service;
-// VULN: CWE-330 (MEDIUM) - Insecure randomness: java.util.Random used for a reset token
+
 import org.springframework.stereotype.Service;
-import java.util.Random;
+import java.security.SecureRandom;
+
 @Service
 public class TokenService {
     public String generateResetToken() {
-        Random random = new Random();
-        int token = random.nextInt(999999);
+        SecureRandom secureRandom = new SecureRandom();
+        int token = secureRandom.nextInt(999999);
         return String.format("%06d", token);
     }
 }
